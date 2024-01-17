@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'MyShop',
       theme: ThemeData(
-        //colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
@@ -22,21 +22,20 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
   });
 
   @override
-  State<HomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<HomePage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MyShop'),
+        backgroundColor: Colors.blue,
+        title: const Text(
+          'MyShop',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: const Center(
         child: Text(
