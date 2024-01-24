@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/product_provider.dart';
+import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/screens/cart_screen.dart';
+import 'package:shop_app/widgets/app_drawer.dart';
+import 'package:shop_app/widgets/badge.dart';
 import 'package:shop_app/widgets/product_grid.dart';
 
 enum FilterOptions {
@@ -19,10 +22,21 @@ class _ProductOverViewScreenState extends State<ProductOverViewScreen> {
   var _showOnlyFavorite = false;
   @override
   Widget build(BuildContext context) {
-    // final productsContainer =
-    //     Provider.of<ProductProvider>(context, listen: false);
+    // final cart =
+    //     Provider.of<CartProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              icon: const Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+            );
+          },
+        ),
         title: const Text(
           'MyShop',
           style: TextStyle(color: Colors.white),
@@ -30,13 +44,15 @@ class _ProductOverViewScreenState extends State<ProductOverViewScreen> {
         actions: [
           PopupMenuButton(
             onSelected: (FilterOptions selectedValue) {
-              if (selectedValue == FilterOptions.favorite) {
-                //productsContainer.showFavoritesOnly();
-                _showOnlyFavorite = true;
-              } else {
-                //  productsContainer.showAll();
-                _showOnlyFavorite = false;
-              }
+              setState(() {
+                if (selectedValue == FilterOptions.favorite) {
+                  //productsContainer.showFavoritesOnly();
+                  _showOnlyFavorite = true;
+                } else {
+                  //  productsContainer.showAll();
+                  _showOnlyFavorite = false;
+                }
+              });
             },
             icon: const Icon(
               Icons.more_vert,
@@ -53,9 +69,26 @@ class _ProductOverViewScreenState extends State<ProductOverViewScreen> {
               ),
             ],
           ),
+          Consumer<CartProvider>(
+            builder: (_, cart, chil) => ShopBadge(
+              value: cart.itemCount.toString(),
+              color: Colors.deepOrange,
+              child: chil!,
+            ),
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+              icon: const Icon(
+                Icons.shopping_cart,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ],
       ),
-      body: const ProductsGrid(),
+      body: ProductsGrid(_showOnlyFavorite),
+      drawer: const AppDrawer(),
     );
   }
 }

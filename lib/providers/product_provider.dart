@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_final_fields
 
 import 'package:flutter/material.dart';
-import 'package:shop_app/providers/product_model.dart';
+import 'package:shop_app/providers/product.dart';
 
 class ProductProvider with ChangeNotifier {
   final List<Product> _items = [
@@ -46,6 +46,10 @@ class ProductProvider with ChangeNotifier {
     //   return _items.where((prodItem) => prodItem.isFavorite).toList();
     // }
     return [..._items];
+  }
+
+  List<Product> get favoriteItem {
+    return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
   Product findById(String id) {
