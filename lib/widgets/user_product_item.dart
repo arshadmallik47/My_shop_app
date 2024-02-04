@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/product_provider.dart';
@@ -11,6 +13,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     return ListTile(
       title: Text(title),
       leading: CircleAvatar(
@@ -30,9 +33,17 @@ class UserProductItem extends StatelessWidget {
             ),
             IconButton(
               color: Theme.of(context).colorScheme.error,
-              onPressed: () {
-                Provider.of<ProductProvider>(context, listen: false)
-                    .deleteProduct(id);
+              onPressed: () async {
+                try {
+                  await Provider.of<ProductProvider>(context, listen: false)
+                      .deleteProduct(id);
+                } catch (error) {
+                  scaffold.showSnackBar(const SnackBar(
+                      content: Text(
+                    'Deleting failed!',
+                    textAlign: TextAlign.center,
+                  )));
+                }
               },
               icon: const Icon(Icons.delete),
             ),
