@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -20,6 +22,9 @@ class OrderItem {
 
 class OrdersProvider with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String authToken;
+  final String userId;
+  OrdersProvider(this.authToken, this.userId, this._orders);
 
   // get orders...
   List<OrderItem> get orders {
@@ -28,7 +33,8 @@ class OrdersProvider with ChangeNotifier {
 
   // fetch and set orders
   Future<void> fetchAndSetOrders() async {
-    const url = 'https://my-shop-d3722-default-rtdb.firebaseio.com/orders.json';
+    final url =
+        'https://my-shop-d3722-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken';
     final response = await http.get(Uri.parse(url));
     final List<OrderItem> loadedOrders = [];
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
@@ -59,7 +65,8 @@ class OrdersProvider with ChangeNotifier {
   // Add Orders...
 
   Future<void> addOrders(List<CartItem> cartProducts, double total) async {
-    const url = 'https://my-shop-d3722-default-rtdb.firebaseio.com/orders.json';
+    final url =
+        'https://my-shop-d3722-default-rtdb.firebaseio.com/orders/$userId.json?auth=$authToken';
     final timestamp = DateTime.now();
     final response = await http.post(
       Uri.parse(url),

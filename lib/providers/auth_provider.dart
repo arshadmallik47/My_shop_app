@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:shop_app/models/http_exception.dart';
 
 class AuthProvider with ChangeNotifier {
-  late String _token;
-  late String _userId;
+  String? _token;
+  String? _userId;
   DateTime? _expiryDate;
 
   bool get isAuth {
@@ -19,9 +19,13 @@ class AuthProvider with ChangeNotifier {
     if (_expiryDate != null &&
         _expiryDate!.isAfter(DateTime.now()) &&
         _token != null) {
-      return _token;
+      return _token!;
     }
     return null;
+  }
+
+  String get userId {
+    return _userId!;
   }
 
   Future<void> _authenticate(
@@ -77,19 +81,13 @@ class AuthProvider with ChangeNotifier {
   // login user
   Future<void> logIn(String email, String password) async {
     return _authenticate(email, password, 'signInWithPassword');
-    //  const url =
+  }
 
-    //     'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDzgWxjYFN-I4biShqHUb9nKKa6QTx63us';
-    // final response = await http.post(
-    //   Uri.parse(url),
-    //   body: json.encode(
-    //     {
-    //       'email': email,
-    //       'password': password,
-    //       'returnSecureToken': true,
-    //     },
-    //   ),
-    // );
-    // print(json.decode(response.body));
+  // logout user
+  void logout() {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    notifyListeners();
   }
 }
