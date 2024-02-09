@@ -23,16 +23,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiProvider(
         providers: [
-          ChangeNotifierProvider.value(
-            value: AuthProvider(),
+          ChangeNotifierProvider<AuthProvider>(
+            create: (ctx) => AuthProvider(),
           ),
           ChangeNotifierProxyProvider<AuthProvider, ProductProvider>(
-            create: (context) => ProductProvider('', '', []),
-            update: (context, auth, previousProducts) => ProductProvider(
-              auth.token!,
-              auth.userId!,
-              previousProducts == null ? [] : previousProducts.items,
-            ),
+            create: (_) => ProductProvider('', '', []),
+            update: (context, auth, previousProducts) {
+              if (auth != null && auth.token != null && auth.userId != null) {
+                return ProductProvider(
+                  auth.token!,
+                  auth.userId!,
+                  previousProducts?.items ?? [],
+                );
+              }
+              // Handle the case when auth is null or its properties are null.
+              // For example, you might return a default ProductProvider instance.
+              return ProductProvider('', '', []);
+            },
           ),
           // ChangeNotifierProvider(
           //   create: (ctx) => ProductProvider(),
@@ -41,11 +48,12 @@ class MyApp extends StatelessWidget {
             create: (ctx) => CartProvider(),
           ),
           ChangeNotifierProxyProvider<AuthProvider, OrdersProvider>(
-            create: (ctx) => OrdersProvider('', '', []),
+            create: (_) => OrdersProvider('', '', []),
             update: (context, auth, previousOrders) => OrdersProvider(
-                auth.token!,
-                auth.userId!,
-                previousOrders == null ? [] : previousOrders.orders),
+              auth.token!,
+              auth.userId!,
+              previousOrders?.orders ?? [],
+            ),
           ),
           // ChangeNotifierProvider(
           //   create: (ctx) => OrdersProvider(),

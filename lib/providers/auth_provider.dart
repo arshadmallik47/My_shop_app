@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_null_comparison
+// ignore_for_file: avoid_print, unnecessary_null_comparison, non_constant_identifier_names
 
 import 'dart:convert';
 
@@ -7,25 +7,25 @@ import 'package:http/http.dart' as http;
 import 'package:shop_app/models/http_exception.dart';
 
 class AuthProvider with ChangeNotifier {
-  String? _token;
-  String? _userId;
-  DateTime? _expiryDate;
+  String? token;
+  String? userId;
+  DateTime? expiryDate;
 
   bool get isAuth {
     return token != null;
   }
 
-  String? get token {
-    if (_expiryDate != null &&
-        _expiryDate!.isAfter(DateTime.now()) &&
-        _token != null) {
-      return _token!;
+  String? get Token {
+    if (expiryDate != null &&
+        expiryDate!.isAfter(DateTime.now()) &&
+        token != null) {
+      return token!;
     }
     return null;
   }
 
-  String get userId {
-    return _userId!;
+  String? get UserId {
+    return userId!;
   }
 
   Future<void> _authenticate(
@@ -47,9 +47,9 @@ class AuthProvider with ChangeNotifier {
       if (responseData['error'] != null) {
         throw HttpException(responseData['error']['message']);
       }
-      _token = responseData['idToken'];
-      _userId = responseData['localId'];
-      _expiryDate = DateTime.now().add(
+      token = responseData['idToken'];
+      userId = responseData['localId'];
+      expiryDate = DateTime.now().add(
         Duration(
           seconds: int.parse(responseData['expiresIn']),
         ),
@@ -85,9 +85,9 @@ class AuthProvider with ChangeNotifier {
 
   // logout user
   void logout() {
-    _token = null;
-    _userId = null;
-    _expiryDate = null;
+    token = null;
+    userId = null;
+    expiryDate = null;
     notifyListeners();
   }
 }
