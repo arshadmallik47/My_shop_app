@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/auth_provider.dart';
@@ -10,6 +12,7 @@ import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/product_overview_screen.dart';
+import 'package:shop_app/screens/splash_screen.dart';
 import 'package:shop_app/screens/user_product_screen.dart';
 
 void main() {
@@ -48,12 +51,25 @@ class MyApp extends StatelessWidget {
             create: (ctx) => CartProvider(),
           ),
           ChangeNotifierProxyProvider<AuthProvider, OrdersProvider>(
+            // create: (_) => OrdersProvider('', '', []),
             create: (_) => OrdersProvider('', '', []),
-            update: (context, auth, previousOrders) => OrdersProvider(
-              auth.token!,
-              auth.userId!,
-              previousOrders?.orders ?? [],
-            ),
+            update: (context, auth, previousProducts) {
+              if (auth != null && auth.token != null && auth.userId != null) {
+                return OrdersProvider(
+                  auth.token!,
+                  auth.userId!,
+                  previousProducts?.orders ?? [],
+                );
+              }
+              // Handle the case when auth is null or its properties are null.
+              // For example, you might return a default ProductProvider instance.
+              return OrdersProvider('', '', []);
+            },
+            // update: (context, auth, previousOrders) => OrdersProvider(
+            //   auth.token!,
+            //   auth.userId!,
+            //   previousOrders?.orders ?? [],
+            // ),
           ),
           // ChangeNotifierProvider(
           //   create: (ctx) => OrdersProvider(),
@@ -75,7 +91,14 @@ class MyApp extends StatelessWidget {
             ),
             home: auth.isAuth
                 ? const ProductOverViewScreen()
-                : const AuthScreen(),
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (context, authResultSnapshot) =>
+                        authResultSnapshot.connectionState ==
+                                ConnectionState.waiting
+                            ? const SplashScreen()
+                            : const AuthScreen(),
+                  ),
             routes: {
               ProductDetailScreen.routeName: (context) =>
                   const ProductDetailScreen(),
