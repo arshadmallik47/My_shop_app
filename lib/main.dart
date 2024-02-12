@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/helpers/custom_route.dart';
 import 'package:shop_app/providers/auth_provider.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/order.dart';
@@ -80,6 +81,10 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'MyShop',
             theme: ThemeData(
+              pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              }),
               appBarTheme: const AppBarTheme(color: Colors.purple),
               hintColor: Colors.deepOrange,
               primaryColor: Colors.purple,

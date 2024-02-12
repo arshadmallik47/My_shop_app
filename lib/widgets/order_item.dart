@@ -16,28 +16,35 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
   var _expanded = false;
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          ListTile(
-            title: Text('\$${widget.orders.amount}'),
-            subtitle: Text(
-              DateFormat('dd/MM/yyyy hh:mm').format(widget.orders.dateTime),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      height:
+          _expanded ? min(widget.orders.products.length * 20.0 + 110, 200) : 95,
+      child: Card(
+        margin: const EdgeInsets.all(10),
+        child: Column(
+          children: [
+            ListTile(
+              title: Text('\$${widget.orders.amount}'),
+              subtitle: Text(
+                DateFormat('dd/MM/yyyy hh:mm').format(widget.orders.dateTime),
+              ),
+              trailing: IconButton(
+                onPressed: () {
+                  setState(() {
+                    _expanded = !_expanded;
+                  });
+                },
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+              ),
             ),
-            trailing: IconButton(
-              onPressed: () {
-                setState(() {
-                  _expanded = !_expanded;
-                });
-              },
-              icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-            ),
-          ),
-          if (_expanded)
-            Container(
+            //if (_expanded)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
-              height: min(widget.orders.products.length * 20.0 + 15, 100),
+              height: _expanded
+                  ? min(widget.orders.products.length * 20.0 + 15, 100)
+                  : 0,
               child: ListView(
                 children: widget.orders.products
                     .map(
@@ -64,7 +71,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     .toList(),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
